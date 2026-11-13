@@ -18,6 +18,18 @@
   --red: #fde5e5;
   --red-text: #bd3434;
 }
+
+.answer {
+  display: none;
+  color: #18763b;
+  font-size: 12px;
+  margin-top: 5px;
+  font-weight: 600;
+}
+body.show-answers .answer {
+  display: block;
+}
+  
 * { box-sizing: border-box; }
 body {
   margin: 0;
@@ -177,6 +189,7 @@ input.field-wrong {
     <button class="primary" onclick="checkAnswers()">Проверить</button>
     <button class="secondary" onclick="shuffleWords()">⇄ Перемешать</button>
     <button class="secondary" onclick="resetAnswers()">Сбросить ответы</button>
+    <button class="secondary" onclick="toggleAnswers()">?</button>
   </div>
 
   <div class="table-wrap">
@@ -333,14 +346,23 @@ function renderTable() {
     const row = document.createElement("tr");
     row.dataset.index = index;
 
-    row.innerHTML = `
-      <td>${verb[0]}</td>
-      <td><input type="text" autocomplete="off" data-field="1" aria-label="Past Simple ${verb[0]}"></td>
-      <td><input type="text" autocomplete="off" data-field="2" aria-label="Past Participle ${verb[0]}"></td>
-      <td class="translation">
-        <input type="text" autocomplete="off" data-field="3"
-         aria-label="Перевод ${verb[0]}">
-      </td>
+ row.innerHTML = `
+  <td>
+    ${verb[0]}
+    <div class="answer">${verb[0]}</div>
+  </td>
+  <td>
+    <input type="text" autocomplete="off" data-field="1">
+    <div class="answer">${verb[1].replace(/\|/g, " / ")}</div>
+  </td>
+  <td>
+    <input type="text" autocomplete="off" data-field="2">
+    <div class="answer">${verb[2].replace(/\|/g, " / ")}</div>
+  </td>
+  <td class="translation">
+    <input type="text" autocomplete="off" data-field="3">
+    <div class="answer">${verb[3]}</div>
+  </td>
     `;
 
     tbody.appendChild(row);
@@ -437,6 +459,10 @@ function shuffleWords() {
       [currentVerbs[j], currentVerbs[i]];
   }
 
+function toggleAnswers() {
+  document.body.classList.toggle("show-answers");
+}
+  
   renderTable();
 
   document.querySelectorAll("#verbTable tr").forEach(row => {

@@ -430,11 +430,6 @@ function checkAnswers() {
   document.getElementById("wrongCount").textContent = wrong;
   document.getElementById("progressFill").style.width =
     (correct / currentVerbs.length * 100) + "%";
-
-  document.getElementById("message").textContent =
-    correct === currentVerbs.length
-      ? "🎉 Отлично! Все ответы правильные!"
-      : `Правильных строк: ${correct} из ${currentVerbs.length}. Исправь красные поля и проверь ещё раз.`;
 }
 
 function updateStats() {
@@ -486,10 +481,6 @@ function resetAnswers() {
       input.classList.remove("field-correct", "field-wrong");
     });
   });
-
-  updateStats();
-  document.getElementById("message").textContent =
-    "Ответы очищены. Начинай заново!";
 }
 
 renderTable();

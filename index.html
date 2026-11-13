@@ -1,0 +1,474 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Irregular Verbs Practice</title>
+<style>
+:root {
+  --bg: #f5f6fa;
+  --surface: #ffffff;
+  --text: #242735;
+  --muted: #85899a;
+  --border: #e7e9f0;
+  --accent: #6558d3;
+  --green: #dff5e6;
+  --green-text: #18763b;
+  --red: #fde5e5;
+  --red-text: #bd3434;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  padding: 30px 20px 60px;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+.container { max-width: 1250px; margin: auto; }
+header { margin-bottom: 25px; }
+h1 { font-size: 27px; margin: 0 0 8px; }
+.subtitle { color: var(--muted); font-size: 14px; }
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.stat {
+  background: var(--surface);
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+.stat-label { color: var(--muted); font-size: 12px; }
+.stat-value { font-size: 23px; font-weight: 700; margin-top: 5px; }
+.progress {
+  height: 7px;
+  background: #e5e5ef;
+  border-radius: 20px;
+  overflow: hidden;
+  margin: 15px 0 22px;
+}
+.progress-fill {
+  height: 100%;
+  width: 0;
+  background: var(--accent);
+  transition: width .2s;
+}
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+button {
+  border: 0;
+  border-radius: 9px;
+  padding: 12px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+button:active { transform: scale(.98); }
+.primary { background: var(--accent); color: white; }
+.secondary { background: white; color: var(--text); border: 1px solid var(--border); }
+.table-wrap {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+table { width: 100%; border-collapse: collapse; }
+th {
+  background: #f8f8fb;
+  color: #74788a;
+  text-align: left;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  padding: 14px 12px;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+td {
+  border-top: 1px solid var(--border);
+  padding: 8px 10px;
+  font-size: 14px;
+}
+td:first-child { font-weight: 650; }
+td.translation { color: #65697a; }
+input {
+  width: 100%;
+  min-width: 90px;
+  padding: 10px 9px;
+  border: 1px solid #e1e3eb;
+  border-radius: 7px;
+  outline: none;
+  font-size: 14px;
+  color: var(--text);
+  background: white;
+}
+input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px #6558d322;
+}
+tr.correct { background: var(--green); }
+tr.wrong { background: var(--red); }
+tr.correct td { border-color: #c4e9d0; }
+tr.wrong td { border-color: #f5cccc; }
+input.field-correct {
+  border-color: #39a761;
+  background: #f5fff7;
+}
+input.field-wrong {
+  border-color: #d94c4c;
+  background: #fff7f7;
+}
+.message {
+  margin-top: 14px;
+  font-size: 13px;
+  color: var(--muted);
+  min-height: 20px;
+}
+@media(max-width: 700px) {
+  body { padding: 20px 10px 40px; }
+  h1 { font-size: 22px; }
+  .stats { gap: 7px; }
+  .stat { padding: 11px 8px; }
+  .stat-value { font-size: 19px; }
+  .table-wrap { overflow-x: auto; }
+  table { min-width: 760px; }
+  th, td { padding: 9px 8px; }
+  input { min-width: 110px; }
+  button { padding: 11px 13px; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>Irregular Verbs</h1>
+    <div class="subtitle">Тренажёр неправильных глаголов</div>
+  </header>
+
+  <section class="stats">
+    <div class="stat">
+      <div class="stat-label">Всего глаголов</div>
+      <div class="stat-value" id="total">116</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Правильно</div>
+      <div class="stat-value" id="correctCount">0</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Ошибки</div>
+      <div class="stat-value" id="wrongCount">0</div>
+    </div>
+  </section>
+
+  <div class="progress">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+
+  <div class="controls">
+    <button class="primary" onclick="checkAnswers()">Проверить</button>
+    <button class="secondary" onclick="shuffleWords()">⇄ Перемешать</button>
+    <button class="secondary" onclick="resetAnswers()">Сбросить ответы</button>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Infinitive</th>
+          <th>Past Simple</th>
+          <th>Past Participle</th>
+          <th>Перевод</th>
+        </tr>
+      </thead>
+      <tbody id="verbTable"></tbody>
+    </table>
+  </div>
+
+  <div class="message" id="message">
+    Заполни все поля и нажми «Проверить».
+  </div>
+</div>
+
+<script>
+// answers: варианты ответа для каждой формы.
+// Для be, например, нужно написать обе формы: was/were.
+// Альтернативные варианты разделены вертикальной чертой.
+// Переводы проверяются по списку допустимых значений.
+
+const verbs = [
+["be","was/were","been","Быть",["быть"]],
+["beat","beat","beaten","Бить",["бить","избивать"]],
+["become","became","become","Становиться",["становиться","стать"]],
+["begin","began","begun","Начинать",["начинать","начать"]],
+["bend","bent","bent","Гнуть",["гнуть","сгибать"]],
+["bet","bet|betted","bet|betted","Держать пари",["держать пари","ставить"]],
+["bite","bit","bitten","Кусать",["кусать","укусить"]],
+["blow","blew","blown","Дуть",["дуть","выдувать"]],
+["break","broke","broken","Ломать",["ломать","разбивать"]],
+["bring","brought","brought","Приносить",["приносить","принести"]],
+["broadcast","broadcast|broadcasted","broadcast|broadcasted","Транслировать",["транслировать","вещать"]],
+["build","built","built","Строить",["строить","построить"]],
+["burst","burst","burst","Разразиться",["разразиться","лопаться","взрываться"]],
+["buy","bought","bought","Покупать",["покупать","купить"]],
+["catch","caught","caught","Ловить",["ловить","поймать"]],
+["choose","chose","chosen","Выбирать",["выбирать","выбрать"]],
+["come","came","come","Приходить",["приходить","приходить сюда"]],
+["cost","cost","cost","Стоить",["стоить"]],
+["creep","crept","crept","Ползать",["ползать","красться"]],
+["cut","cut","cut","Резать",["резать","разрезать"]],
+["deal","dealt","dealt","Договариваться",["договариваться","иметь дело","распределять"]],
+["dig","dug","dug","Копать",["копать","выкапывать"]],
+["do","did","done","Делать",["делать","выполнять"]],
+["draw","drew","drawn","Рисовать",["рисовать","чертить","тянуть"]],
+["drink","drank","drunk","Пить",["пить","выпивать"]],
+["drive","drove","driven","Управлять",["управлять","водить","ехать на машине"]],
+["eat","ate","eaten","Есть",["есть","кушать"]],
+["fall","fell","fallen","Падать",["падать","упасть"]],
+["feed","fed","fed","Кормить",["кормить","накормить"]],
+["feel","felt","felt","Чувствовать",["чувствовать","ощущать"]],
+["fight","fought","fought","Сражаться",["сражаться","драться","бороться"]],
+["find","found","found","Находить",["находить","найти"]],
+["flee","fled","fled","Убегать",["убегать","убежать","спасаться бегством"]],
+["fly","flew","flown","Летать",["летать","лететь"]],
+["forbid","forbade|forbad","forbidden","Запрещать",["запрещать","запретить"]],
+["forget","forgot","forgotten","Забывать",["забывать","забыть"]],
+["forgive","forgave","forgiven","Прощать",["прощать","простить"]],
+["freeze","froze","frozen","Морозить",["морозить","замерзать","замораживать"]],
+["get","got","got|gotten","Получать",["получать","доставать","добиваться"]],
+["give","gave","given","Давать",["давать","дать"]],
+["go","went","gone","Идти",["идти","ходить","ехать"]],
+["grow","grew","grown","Расти",["расти","выращивать"]],
+["hang","hung|hanged","hung|hanged","Вешать",["вешать","висеть"]],
+["have","had","had","Иметь",["иметь","обладать"]],
+["hear","heard","heard","Слышать",["слышать","услышать"]],
+["hide","hid","hidden","Прятать",["прятать","скрывать"]],
+["hit","hit","hit","Ударить",["ударить","ударять"]],
+["hold","held","held","Держать",["держать","удерживать"]],
+["hurt","hurt","hurt","Ранить",["ранить","причинять боль"]],
+["keep","kept","kept","Хранить",["хранить","держать","соблюдать","продолжать"]],
+["kneel","knelt|kneeled","knelt|kneeled","Стоять на коленях",["стоять на коленях","становиться на колени","кланяться"]],
+["know","knew","known","Знать",["знать","узнавать"]],
+["lay","laid","laid","Класть",["класть","положить"]],
+["lead","led","led","Вести",["вести","руководить"]],
+["leave","left","left","Покидать",["покидать","уходить","оставлять"]],
+["lend","lent","lent","Одолжить",["одолжить","давать взаймы"]],
+["let","let","let","Разрешать",["разрешать","позволять"]],
+["lie","lay","lain","Лежать",["лежать"]],
+["light","lit|lighted","lit|lighted","Зажигать",["зажигать","светить","освещать"]],
+["lose","lost","lost","Терять",["терять","проигрывать"]],
+["make","made","made","Изготавливать",["изготавливать","делать","создавать"]],
+["mean","meant","meant","Значить",["значить","иметь в виду"]],
+["meet","met","met","Встречать",["встречать","встречаться"]],
+["pay","paid","paid","Платить",["платить","оплачивать"]],
+["put","put","put","Класть",["класть","ставить","помещать"]],
+["read","read","read","Читать",["читать","прочитать"]],
+["ride","rode","ridden","Ехать верхом",["ехать верхом","ездить верхом","кататься"]],
+["ring","rang","rung","Звонить",["звонить","звенеть"]],
+["rise","rose","risen","Подниматься",["подниматься","вставать","возрастать"]],
+["run","ran","run","Бежать",["бежать","бегать"]],
+["say","said","said","Говорить",["говорить","сказать"]],
+["see","saw","seen","Видеть",["видеть","увидеть"]],
+["seek","sought","sought","Искать",["искать","разыскивать"]],
+["sell","sold","sold","Продавать",["продавать","продать"]],
+["send","sent","sent","Посылать",["посылать","отправлять"]],
+["set","set","set","Устанавливать",["устанавливать","ставить","задавать"]],
+["sew","sewed","sewn|sewed","Шить",["шить","сшивать"]],
+["shake","shook","shaken","Трясти",["трясти","встряхивать"]],
+["shine","shone|shined","shone|shined","Блестеть",["блестеть","светить","сиять"]],
+["shoot","shot","shot","Стрелять",["стрелять","выстрелить"]],
+["show","showed","shown|showed","Показывать",["показывать","показать"]],
+["shrink","shrank|shrunk","shrunk|shrunken","Сжиматься",["сжиматься","сокращаться","усаживаться"]],
+["shut","shut","shut","Захлопывать",["захлопывать","закрывать"]],
+["sing","sang","sung","Петь",["петь"]],
+["sink","sank|sunk","sunk","Тонуть",["тонуть","затонуть"]],
+["sit","sat","sat","Сидеть",["сидеть","садиться"]],
+["sleep","slept","slept","Спать",["спать"]],
+["slide","slid","slid","Скользить",["скользить","соскальзывать"]],
+["speak","spoke","spoken","Говорить",["говорить","разговаривать","беседовать"]],
+["spend","spent","spent","Проводить",["проводить","тратить"]],
+["spit","spat|spit","spat|spit","Плевать",["плевать","плеваться"]],
+["split","split","split","Разделять",["разделять","раскалывать","расщеплять"]],
+["spread","spread","spread","Распространяться",["распространяться","распространять","разворачивать"]],
+["spring","sprang|sprung","sprung","Прыгать",["прыгать","вскакивать","возникать"]],
+["stand","stood","stood","Стоять",["стоять","вставать"]],
+["steal","stole","stolen","Красть",["красть","украсть"]],
+["stick","stuck","stuck","Приклеивать",["приклеивать","клеить","застревать"]],
+["sting","stung","stung","Жалить",["жалить","ужалить"]],
+["stink","stank|stunk","stunk","Вонять",["вонять","пахнуть неприятно"]],
+["strike","struck","struck|stricken","Ударять",["ударять","наносить удар","бастовать"]],
+["swear","swore","sworn","Клясться",["клясться","ругаться","присягать"]],
+["sweep","swept","swept","Подметать",["подметать","мести"]],
+["swim","swam","swum","Плыть",["плыть","плавать"]],
+["swing","swung","swung","Качаться",["качаться","раскачивать"]],
+["take","took","taken","Брать",["брать","взять"]],
+["teach","taught","taught","Учить",["учить","преподавать","обучать"]],
+["tear","tore","torn","Рвать",["рвать","разрывать"]],
+["tell","told","told","Рассказывать",["рассказывать","сообщать","говорить"]],
+["think","thought","thought","Думать",["думать","считать"]],
+["throw","threw","thrown","Кидать",["кидать","бросать"]],
+["understand","understood","understood","Понимать",["понимать","понять"]],
+["wake","woke|waked","woken|waked","Просыпаться",["просыпаться","будить"]],
+["wear","wore","worn","Носить",["носить","быть одетым"]],
+["weep","wept","wept","Плакать",["плакать","рыдать"]],
+["win","won","won","Выигрывать",["выигрывать","побеждать"]],
+["write","wrote","written","Писать",["писать","записывать"]]
+];
+
+let currentVerbs = [...verbs];
+
+function renderTable() {
+  const tbody = document.getElementById("verbTable");
+  tbody.innerHTML = "";
+
+  currentVerbs.forEach((verb, index) => {
+    const row = document.createElement("tr");
+    row.dataset.index = index;
+
+    row.innerHTML = `
+      <td>${verb[0]}</td>
+      <td><input type="text" autocomplete="off" data-field="1" aria-label="Past Simple ${verb[0]}"></td>
+      <td><input type="text" autocomplete="off" data-field="2" aria-label="Past Participle ${verb[0]}"></td>
+      <td class="translation">
+        <input type="text" autocomplete="off" data-field="3"
+          placeholder="${verb[3]}" aria-label="Перевод ${verb[0]}">
+      </td>
+    `;
+
+    tbody.appendChild(row);
+  });
+
+  updateStats();
+}
+
+function normalize(value) {
+  return value.toLowerCase()
+    .trim()
+    .replace(/ё/g, "е")
+    .replace(/\s+/g, " ")
+    .replace(/\s*\/\s*/g, "/")
+    .replace(/[.,!?;:]+$/g, "");
+}
+
+function checkOne(input, accepted) {
+  const answer = normalize(input);
+  if (!answer) return false;
+
+  return accepted.split("|").some(option => {
+    return answer === normalize(option);
+  });
+}
+
+function checkTranslation(input, accepted) {
+  const answer = normalize(input);
+  if (!answer) return false;
+
+  return accepted.some(option => normalize(option) === answer);
+}
+
+function checkAnswers() {
+  let correct = 0;
+  let wrong = 0;
+
+  document.querySelectorAll("#verbTable tr").forEach(row => {
+    const index = Number(row.dataset.index);
+    const verb = currentVerbs[index];
+    const inputs = row.querySelectorAll("input");
+
+    let rowCorrect = true;
+
+    inputs.forEach(input => {
+      const field = Number(input.dataset.field);
+      const valid = field === 3
+        ? checkTranslation(input.value, verb[4])
+        : checkOne(input.value, verb[field]);
+
+      input.classList.remove("field-correct", "field-wrong");
+      input.classList.add(valid ? "field-correct" : "field-wrong");
+
+      if (!valid) rowCorrect = false;
+    });
+
+    row.classList.remove("correct", "wrong");
+    row.classList.add(rowCorrect ? "correct" : "wrong");
+
+    if (rowCorrect) correct++;
+    else wrong++;
+  });
+
+  document.getElementById("correctCount").textContent = correct;
+  document.getElementById("wrongCount").textContent = wrong;
+  document.getElementById("progressFill").style.width =
+    (correct / currentVerbs.length * 100) + "%";
+
+  document.getElementById("message").textContent =
+    correct === currentVerbs.length
+      ? "🎉 Отлично! Все ответы правильные!"
+      : `Правильных строк: ${correct} из ${currentVerbs.length}. Исправь красные поля и проверь ещё раз.`;
+}
+
+function updateStats() {
+  document.getElementById("correctCount").textContent = "0";
+  document.getElementById("wrongCount").textContent = "0";
+  document.getElementById("progressFill").style.width = "0%";
+}
+
+function shuffleWords() {
+  // Сохраняем введённые ответы вместе с каждым глаголом.
+  const answers = new Map();
+
+  document.querySelectorAll("#verbTable tr").forEach(row => {
+    const index = Number(row.dataset.index);
+    const inputs = [...row.querySelectorAll("input")];
+    answers.set(currentVerbs[index][0], inputs.map(input => input.value));
+  });
+
+  for (let i = currentVerbs.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [currentVerbs[i], currentVerbs[j]] =
+      [currentVerbs[j], currentVerbs[i]];
+  }
+
+  renderTable();
+
+  document.querySelectorAll("#verbTable tr").forEach(row => {
+    const verb = currentVerbs[Number(row.dataset.index)];
+    const saved = answers.get(verb[0]);
+    if (!saved) return;
+
+    row.querySelectorAll("input").forEach((input, i) => {
+      input.value = saved[i];
+    });
+  });
+
+  document.getElementById("message").textContent =
+    "Слова перемешаны. Можно продолжать!";
+}
+
+function resetAnswers() {
+  document.querySelectorAll("#verbTable tr").forEach(row => {
+    row.classList.remove("correct", "wrong");
+
+    row.querySelectorAll("input").forEach(input => {
+      input.value = "";
+      input.classList.remove("field-correct", "field-wrong");
+    });
+  });
+
+  updateStats();
+  document.getElementById("message").textContent =
+    "Ответы очищены. Начинай заново!";
+}
+
+renderTable();
+</script>
+</body>
+</html>

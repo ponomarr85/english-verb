@@ -4,54 +4,578 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Irregular Verbs Practice</title>
+
 <style>
-:root{--bg:#f5f6fa;--surface:#fff;--text:#242735;--muted:#85899a;--border:#e7e9f0;--accent:#6558d3;--green:#dff5e6;--red:#fde5e5}
-*{box-sizing:border-box}body{margin:0;padding:30px 20px 60px;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-.container{max-width:1250px;margin:auto}header{margin-bottom:25px}h1{font-size:27px;margin:0 0 8px}.subtitle{color:var(--muted);font-size:14px}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}.stat{background:var(--surface);padding:16px;border-radius:12px;border:1px solid var(--border)}.stat-label{color:var(--muted);font-size:12px}.stat-value{font-size:23px;font-weight:700;margin-top:5px}
-.progress{height:7px;background:#e5e5ef;border-radius:20px;overflow:hidden;margin:15px 0 22px}.progress-fill{height:100%;width:0;background:var(--accent);transition:width .2s}
-.controls{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:20px}button{border:0;border-radius:9px;padding:12px 18px;font-size:14px;font-weight:600;cursor:pointer}button:active{transform:scale(.98)}button:disabled{opacity:.5;cursor:not-allowed}.primary{background:var(--accent);color:white}.secondary{background:white;color:var(--text);border:1px solid var(--border)}
-.table-wrap{background:white;border:1px solid var(--border);border-radius:12px;overflow:hidden}table{width:100%;border-collapse:collapse}th{background:#f8f8fb;color:#74788a;text-align:left;font-size:12px;text-transform:uppercase;letter-spacing:.04em;padding:14px 12px;position:sticky;top:0;z-index:1}td{border-top:1px solid var(--border);padding:8px 10px;font-size:14px;vertical-align:middle}td:first-child{font-weight:650}.word-cell{white-space:nowrap}.word-line{display:flex;align-items:center;gap:8px}.hint-button{width:27px;height:27px;padding:0;border-radius:50%;font-size:14px;flex:0 0 27px;background:#f0effb;color:var(--accent);border:1px solid #dedbf8}.hint-popover{display:none;margin-top:8px;padding:9px 10px;border-radius:8px;background:#f8f7ff;border:1px solid #e4e0ff;font-size:12px;line-height:1.6;font-weight:400;white-space:normal;min-width:180px}.hint-popover.visible{display:block}.hint-popover strong{color:var(--accent)}
-input{width:100%;min-width:90px;padding:10px 9px;border:1px solid #e1e3eb;border-radius:7px;outline:none;font-size:14px;color:var(--text);background:white}input:focus{border-color:var(--accent);box-shadow:0 0 0 2px #6558d322}tr.correct{background:var(--green)}tr.wrong{background:var(--red)}tr.correct td{border-color:#c4e9d0}tr.wrong td{border-color:#f5cccc}input.field-correct{border-color:#39a761;background:#f5fff7}input.field-wrong{border-color:#d94c4c;background:#fff7f7}
-.message{margin-top:14px;font-size:13px;color:var(--muted);min-height:20px}
-.modal-backdrop{display:none;position:fixed;inset:0;background:#17182777;z-index:10;align-items:center;justify-content:center;padding:18px}.modal-backdrop.open{display:flex}.modal{background:white;border-radius:16px;width:min(720px,100%);max-height:90vh;display:flex;flex-direction:column;box-shadow:0 20px 70px #0003}.modal-header,.modal-footer{padding:17px 20px;border-bottom:1px solid var(--border)}.modal-header{display:flex;justify-content:space-between;align-items:center}.modal-header h2{font-size:19px;margin:0}.modal-footer{border-top:1px solid var(--border);border-bottom:0;display:flex;gap:9px;justify-content:flex-end;flex-wrap:wrap}.modal-body{padding:16px 20px;overflow:auto}.modal-close{font-size:22px;padding:2px 8px;background:transparent;color:var(--muted)}.settings-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}.settings-row input[type=number]{width:95px;min-width:95px}.settings-actions{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.word-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.word-option{display:flex;align-items:center;gap:8px;padding:7px 9px;border:1px solid var(--border);border-radius:7px;font-size:13px;font-weight:400}.word-option input{width:16px;min-width:16px;margin:0;accent-color:var(--accent)}.settings-note{font-size:12px;color:var(--muted);line-height:1.5;margin:8px 0 0}
-@media(max-width:700px){body{padding:20px 10px 40px}h1{font-size:22px}.stats{gap:7px}.stat{padding:11px 8px}.stat-value{font-size:19px}.table-wrap{overflow-x:auto}table{min-width:780px}th,td{padding:9px 8px}input{min-width:110px}button{padding:11px 13px}.word-list{grid-template-columns:repeat(2,minmax(0,1fr))}.modal-body{padding:13px}}
+:root {
+  color-scheme: light;
+  --bg: #f5f6fa;
+  --surface: #ffffff;
+  --text: #242735;
+  --muted: #85899a;
+  --border: #e7e9f0;
+  --accent: #6558d3;
+  --green: #dff5e6;
+  --red: #fde5e5;
+  --input-bg: #ffffff;
+  --table-head: #f8f8fb;
+  --hint-bg: #f8f7ff;
+  --hint-border: #e4e0ff;
+  --hint-button-bg: #f0effb;
+  --progress-bg: #e5e5ef;
+  --shadow: 0 20px 70px #0003;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #171923;
+  --surface: #222532;
+  --text: #edf0f7;
+  --muted: #a2a8ba;
+  --border: #383d4d;
+  --accent: #9b8cff;
+  --green: #203c30;
+  --red: #482b31;
+  --input-bg: #191d29;
+  --table-head: #292d3b;
+  --hint-bg: #2b2940;
+  --hint-border: #49436d;
+  --hint-button-bg: #302d49;
+  --progress-bg: #34394a;
+  --shadow: 0 20px 70px #0008;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 30px 20px 60px;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  transition: background .2s, color .2s;
+}
+
+.container {
+  max-width: 1250px;
+  margin: auto;
+}
+
+header {
+  margin-bottom: 25px;
+}
+
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.theme-toggle {
+  white-space: nowrap;
+}
+
+h1 {
+  font-size: 27px;
+  margin: 0 0 8px;
+}
+
+.subtitle {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.stat {
+  background: var(--surface);
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+
+.stat-label {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.stat-value {
+  font-size: 23px;
+  font-weight: 700;
+  margin-top: 5px;
+}
+
+.progress {
+  height: 7px;
+  background: var(--progress-bg);
+  border-radius: 20px;
+  overflow: hidden;
+  margin: 15px 0 22px;
+}
+
+.progress-fill {
+  height: 100%;
+  width: 0;
+  background: var(--accent);
+  transition: width .2s;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+button {
+  border: 0;
+  border-radius: 9px;
+  padding: 12px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button:active {
+  transform: scale(.98);
+}
+
+button:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+.primary {
+  background: var(--accent);
+  color: white;
+}
+
+.secondary {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.table-wrap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th {
+  background: var(--table-head);
+  color: var(--muted);
+  text-align: left;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  padding: 14px 12px;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+td {
+  border-top: 1px solid var(--border);
+  padding: 8px 10px;
+  font-size: 14px;
+  vertical-align: middle;
+}
+
+td:first-child {
+  font-weight: 650;
+}
+
+.word-cell {
+  white-space: nowrap;
+}
+
+.word-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hint-button {
+  width: 27px;
+  height: 27px;
+  padding: 0;
+  border-radius: 50%;
+  font-size: 14px;
+  flex: 0 0 27px;
+  background: var(--hint-button-bg);
+  color: var(--accent);
+  border: 1px solid var(--hint-border);
+}
+
+.hint-popover {
+  display: none;
+  margin-top: 8px;
+  padding: 9px 10px;
+  border-radius: 8px;
+  background: var(--hint-bg);
+  border: 1px solid var(--hint-border);
+  font-size: 12px;
+  line-height: 1.6;
+  font-weight: 400;
+  white-space: normal;
+  min-width: 180px;
+}
+
+.hint-popover.visible {
+  display: block;
+}
+
+.hint-popover strong {
+  color: var(--accent);
+}
+
+input {
+  width: 100%;
+  min-width: 90px;
+  padding: 10px 9px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  outline: none;
+  font-size: 14px;
+  color: var(--text);
+  background: var(--input-bg);
+}
+
+input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px #6558d322;
+}
+
+tr.correct {
+  background: var(--green);
+}
+
+tr.wrong {
+  background: var(--red);
+}
+
+tr.correct td {
+  border-color: #39a76155;
+}
+
+tr.wrong td {
+  border-color: #d94c4c55;
+}
+
+input.field-correct {
+  border-color: #39a761;
+  background: var(--green);
+}
+
+input.field-wrong {
+  border-color: #d94c4c;
+  background: var(--red);
+}
+
+.message {
+  margin-top: 14px;
+  font-size: 13px;
+  color: var(--muted);
+  min-height: 20px;
+}
+
+.modal-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: #17182777;
+  z-index: 10;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+}
+
+.modal-backdrop.open {
+  display: flex;
+}
+
+.modal {
+  background: var(--surface);
+  color: var(--text);
+  border-radius: 16px;
+  width: min(720px, 100%);
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow);
+}
+
+.modal-header,
+.modal-footer {
+  padding: 17px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h2 {
+  font-size: 19px;
+  margin: 0;
+}
+
+.modal-footer {
+  border-top: 1px solid var(--border);
+  border-bottom: 0;
+  display: flex;
+  gap: 9px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.modal-body {
+  padding: 16px 20px;
+  overflow: auto;
+}
+
+.modal-close {
+  font-size: 22px;
+  padding: 2px 8px;
+  background: transparent;
+  color: var(--muted);
+}
+
+.settings-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.settings-row input[type=number] {
+  width: 95px;
+  min-width: 95px;
+}
+
+.settings-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.word-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.word-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 9px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 400;
+}
+
+.word-option input {
+  width: 16px;
+  min-width: 16px;
+  margin: 0;
+  accent-color: var(--accent);
+}
+
+.settings-note {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.5;
+  margin: 8px 0 0;
+}
+
+@media(max-width:700px) {
+  body {
+    padding: 20px 10px 40px;
+  }
+
+  h1 {
+    font-size: 22px;
+  }
+
+  .header-top {
+    align-items: flex-start;
+  }
+
+  .stats {
+    gap: 7px;
+  }
+
+  .stat {
+    padding: 11px 8px;
+  }
+
+  .stat-value {
+    font-size: 19px;
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+  }
+
+  table {
+    min-width: 780px;
+  }
+
+  th, td {
+    padding: 9px 8px;
+  }
+
+  input {
+    min-width: 110px;
+  }
+
+  button {
+    padding: 11px 13px;
+  }
+
+  .word-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .modal-body {
+    padding: 13px;
+  }
+}
 </style>
 </head>
+
 <body>
 <div class="container">
-<header><h1>Irregular Verbs</h1>
+
+<header>
+  <div class="header-top">
+    <div>
+      <h1>Irregular Verbs</h1>
+      <div class="subtitle">Тренажёр неправильных глаголов</div>
+    </div>
+
+    <button class="secondary theme-toggle"
+            id="themeToggle"
+            type="button"
+            onclick="toggleTheme()">
+      🌙 Тёмная тема
+    </button>
+  </div>
+</header>
+
 <section class="stats">
-<div class="stat"><div class="stat-label">Глаголов в таблице</div><div class="stat-value" id="total">116</div></div>
-<div class="stat"><div class="stat-label">Правильно</div><div class="stat-value" id="correctCount">0</div></div>
-<div class="stat"><div class="stat-label">Ошибки</div><div class="stat-value" id="wrongCount">0</div></div>
+  <div class="stat">
+    <div class="stat-label">Глаголов в таблице</div>
+    <div class="stat-value" id="total">116</div>
+  </div>
+
+  <div class="stat">
+    <div class="stat-label">Правильно</div>
+    <div class="stat-value" id="correctCount">0</div>
+  </div>
+
+  <div class="stat">
+    <div class="stat-label">Ошибки</div>
+    <div class="stat-value" id="wrongCount">0</div>
+  </div>
 </section>
-<div class="progress"><div class="progress-fill" id="progressFill"></div></div>
-<div class="controls">
-<button class="primary" onclick="checkAnswers()">Проверить</button>
-<button class="secondary" onclick="shuffleWords()">⇄ Перемешать</button>
-<button class="secondary" onclick="openSettings()">⚙ Выбрать слова</button>
-<button class="secondary" onclick="resetAnswers()">Сбросить ответы</button>
+
+<div class="progress">
+  <div class="progress-fill" id="progressFill"></div>
 </div>
-<div class="table-wrap"><table><thead><tr><th>Infinitive</th><th>Past Simple</th><th>Past Participle</th><th>Перевод</th></tr></thead><tbody id="verbTable"></tbody></table></div>
-<div class="message" id="message">Заполни все поля и нажми «Проверить».</div>
+
+<div class="controls">
+  <button class="primary" onclick="checkAnswers()">Проверить</button>
+  <button class="secondary" onclick="shuffleWords()">⇄ Перемешать</button>
+  <button class="secondary" onclick="openSettings()">⚙ Выбрать слова</button>
+  <button class="secondary" onclick="resetAnswers()">Сбросить ответы</button>
+</div>
+
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Infinitive</th>
+        <th>Past Simple</th>
+        <th>Past Participle</th>
+        <th>Перевод</th>
+      </tr>
+    </thead>
+    <tbody id="verbTable"></tbody>
+  </table>
+</div>
+
+<div class="message" id="message">
+  Заполни все поля и нажми «Проверить».
+</div>
+
 </div>
 
 <div class="modal-backdrop" id="settingsModal" onclick="backdropClose(event)">
-<div class="modal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
-<div class="modal-header"><h2 id="settingsTitle">Настройка слов</h2><button class="modal-close" onclick="closeSettings()" aria-label="Закрыть">×</button></div>
-<div class="modal-body">
-<div class="settings-row"><label for="wordCount"><strong>Сколько слов вывести случайно:</strong></label><input id="wordCount" type="number" min="1" max="116" placeholder="Все"><span class="settings-note">Оставь поле пустым, чтобы вывести все отмеченные слова.</span></div>
-<div class="settings-actions"><button class="secondary" type="button" onclick="setAllWords(true)">Выбрать все</button><button class="secondary" type="button" onclick="setAllWords(false)">Снять все</button></div>
-<div class="word-list" id="wordList"></div>
-<p class="settings-note">Сначала отметь глаголы, которые хочешь тренировать. Если указать количество, тренажёр случайно выберет столько слов из отмеченных.</p>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+
+    <div class="modal-header">
+      <h2 id="settingsTitle">Настройка слов</h2>
+      <button class="modal-close" onclick="closeSettings()" aria-label="Закрыть">×</button>
+    </div>
+
+    <div class="modal-body">
+      <div class="settings-row">
+        <label for="wordCount">
+          <strong>Сколько слов вывести случайно:</strong>
+        </label>
+        <input id="wordCount" type="number" min="1" max="116" placeholder="Все">
+        <span class="settings-note">
+          Оставь поле пустым, чтобы вывести все отмеченные слова.
+        </span>
+      </div>
+
+      <div class="settings-actions">
+        <button class="secondary" type="button" onclick="setAllWords(true)">Выбрать все</button>
+        <button class="secondary" type="button" onclick="setAllWords(false)">Снять все</button>
+      </div>
+
+      <div class="word-list" id="wordList"></div>
+
+      <p class="settings-note">
+        Сначала отметь глаголы, которые хочешь тренировать.
+        Если указать количество, тренажёр случайно выберет столько слов из отмеченных.
+      </p>
+    </div>
+
+    <div class="modal-footer">
+      <button class="secondary" onclick="closeSettings()">Отмена</button>
+      <button class="primary" onclick="applySettings()">Применить</button>
+    </div>
+
+  </div>
 </div>
-<div class="modal-footer"><button class="secondary" onclick="closeSettings()">Отмена</button><button class="primary" onclick="applySettings()">Применить</button></div>
-</div></div>
 
 <script>
 // Формат: инфинитив, Past Simple, Past Participle, подпись перевода, допустимые переводы.
-// Варианты английских форм разделены символом |. Для was/were нужно вводить обе формы через /.
+// Варианты английских форм разделены символом |.
+// Для was/were нужно вводить обе формы через /.
+
 const verbs = [
 ["be","was/were","been","Быть",["быть"]],
 ["beat","beat","beaten","Бить",["бить","избивать"]],
@@ -174,75 +698,359 @@ const verbs = [
 let currentVerbs = [...verbs];
 let selectedWords = new Set(verbs.map(v => v[0]));
 
-function escapeHtml(value){return String(value).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));}
-function displayForms(value){return value.split('|').join(' / ');}
+// Переключение темы
 
-function renderTable(){
- const tbody=document.getElementById('verbTable');tbody.innerHTML='';
- currentVerbs.forEach((verb,index)=>{
-  const row=document.createElement('tr');row.dataset.index=index;row.dataset.word=verb[0];
-  row.innerHTML=`
-   <td class="word-cell"><div class="word-line"><span>${escapeHtml(verb[0])}</span><button type="button" class="hint-button" title="Показать ответы" aria-label="Подсказка для ${escapeHtml(verb[0])}" onclick="toggleHint(this)">?</button></div>
-   <div class="hint-popover"><div><strong>Past Simple:</strong> ${escapeHtml(displayForms(verb[1]))}</div><div><strong>Past Participle:</strong> ${escapeHtml(displayForms(verb[2]))}</div><div><strong>Перевод:</strong> ${escapeHtml(verb[3])}</div></div></td>
-   <td><input type="text" autocomplete="off" data-field="1" aria-label="Past Simple ${escapeHtml(verb[0])}"></td>
-   <td><input type="text" autocomplete="off" data-field="2" aria-label="Past Participle ${escapeHtml(verb[0])}"></td>
-   <td><input type="text" autocomplete="off" data-field="3" aria-label="Перевод ${escapeHtml(verb[0])}"></td>`;
-  tbody.appendChild(row);
- });
- document.getElementById('total').textContent=currentVerbs.length;
- updateStats();
-}
-function toggleHint(button){
- const popover=button.closest('td').querySelector('.hint-popover');
- const wasVisible=popover.classList.contains('visible');
- document.querySelectorAll('.hint-popover.visible').forEach(p=>p.classList.remove('visible'));
- if(!wasVisible)popover.classList.add('visible');
-}
-function normalize(value){return value.toLowerCase().trim().replace(/ё/g,'е').replace(/\s+/g,' ').replace(/\s*\/\s*/g,'/').replace(/[.,!?;:]+$/g,'');}
-function checkOne(input,accepted){const answer=normalize(input);if(!answer)return false;return accepted.split('|').some(option=>answer===normalize(option));}
-function checkTranslation(input,accepted){const answer=normalize(input);if(!answer)return false;return accepted.some(option=>normalize(option)===answer);}
-function checkAnswers(){
- let correct=0,wrong=0;
- document.querySelectorAll('#verbTable tr').forEach(row=>{
-  const verb=currentVerbs[Number(row.dataset.index)],inputs=row.querySelectorAll('input');let rowCorrect=true;
-  inputs.forEach(input=>{const field=Number(input.dataset.field);const valid=field===3?checkTranslation(input.value,verb[4]):checkOne(input.value,verb[field]);input.classList.remove('field-correct','field-wrong');input.classList.add(valid?'field-correct':'field-wrong');if(!valid)rowCorrect=false;});
-  row.classList.remove('correct','wrong');row.classList.add(rowCorrect?'correct':'wrong');if(rowCorrect)correct++;else wrong++;
- });
- document.getElementById('correctCount').textContent=correct;document.getElementById('wrongCount').textContent=wrong;
- document.getElementById('progressFill').style.width=(correct/currentVerbs.length*100||0)+'%';
- document.getElementById('message').textContent=correct===currentVerbs.length?'🎉 Отлично! Все ответы правильные!':`Правильных строк: ${correct} из ${currentVerbs.length}. Исправь красные поля и проверь ещё раз.`;
-}
-function updateStats(){document.getElementById('correctCount').textContent='0';document.getElementById('wrongCount').textContent='0';document.getElementById('progressFill').style.width='0%';}
-function collectAnswers(){const answers=new Map();document.querySelectorAll('#verbTable tr').forEach(row=>{const inputs=[...row.querySelectorAll('input')];answers.set(row.dataset.word,inputs.map(input=>input.value));});return answers;}
-function restoreAnswers(answers){document.querySelectorAll('#verbTable tr').forEach(row=>{const saved=answers.get(row.dataset.word);if(saved)row.querySelectorAll('input').forEach((input,i)=>input.value=saved[i]);});}
-function shuffleWords(){const answers=collectAnswers();currentVerbs=[...currentVerbs];for(let i=currentVerbs.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[currentVerbs[i],currentVerbs[j]]=[currentVerbs[j],currentVerbs[i]];}renderTable();restoreAnswers(answers);document.getElementById('message').textContent='';}
-function resetAnswers(){document.querySelectorAll('#verbTable tr').forEach(row=>{row.classList.remove('correct','wrong');row.querySelectorAll('input').forEach(input=>{input.value='';input.classList.remove('field-correct','field-wrong');});row.querySelector('.hint-popover').classList.remove('visible');});updateStats();document.getElementById('message').textContent='Ответы очищены. Начинай заново!';}
+function applyTheme(theme) {
+  document.documentElement.dataset.theme = theme;
 
-function openSettings(){
- const list=document.getElementById('wordList');list.innerHTML='';
- verbs.forEach(verb=>{const label=document.createElement('label');label.className='word-option';const checkbox=document.createElement('input');checkbox.type='checkbox';checkbox.value=verb[0];checkbox.checked=selectedWords.has(verb[0]);const span=document.createElement('span');span.textContent=verb[0];label.append(checkbox,span);list.appendChild(label);});
- document.getElementById('wordCount').value='';document.getElementById('settingsModal').classList.add('open');
+  const button = document.getElementById('themeToggle');
+
+  if (button) {
+    button.textContent = theme === 'dark'
+      ? '☀️ Светлая тема'
+      : '🌙 Тёмная тема';
+  }
 }
-function closeSettings(){document.getElementById('settingsModal').classList.remove('open');}
-function backdropClose(event){if(event.target.id==='settingsModal')closeSettings();}
-function setAllWords(checked){document.querySelectorAll('#wordList input[type=checkbox]').forEach(input=>input.checked=checked);}
-function applySettings(){
- const checked=[...document.querySelectorAll('#wordList input:checked')].map(input=>input.value);
- if(!checked.length){alert('Выбери хотя бы один глагол.');return;}
- const countInput=document.getElementById('wordCount').value.trim();let chosen=verbs.filter(verb=>checked.includes(verb[0]));
- if(countInput!==''){
-  const count=Number(countInput);
-  if(!Number.isInteger(count)||count<1){alert('Укажи целое число больше нуля.');return;}
-  if(count>chosen.length){alert(`Отмечено только ${chosen.length} слов. Уменьши количество или отметь больше глаголов.`);return;}
-  chosen=shuffleArray(chosen).slice(0,count);
- }
- selectedWords=new Set(checked);currentVerbs=chosen;
- renderTable();document.getElementById('message').textContent=`Выбрано глаголов: ${currentVerbs.length}.`;
- closeSettings();
+
+function toggleTheme() {
+  const next = document.documentElement.dataset.theme === 'dark'
+    ? 'light'
+    : 'dark';
+
+  applyTheme(next);
+
+  try {
+    localStorage.setItem('irregularVerbsTheme', next);
+  } catch (error) {}
 }
-function shuffleArray(array){const result=[...array];for(let i=result.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[result[i],result[j]]=[result[j],result[i]];}return result;}
-document.addEventListener('keydown',event=>{if(event.key==='Escape')closeSettings();});
+
+function initializeTheme() {
+  let saved = null;
+
+  try {
+    saved = localStorage.getItem('irregularVerbsTheme');
+  } catch (error) {}
+
+  const preferred = saved ||
+    (window.matchMedia &&
+     window.matchMedia('(prefers-color-scheme: dark)').matches
+      ? 'dark'
+      : 'light');
+
+  applyTheme(preferred);
+}
+
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, ch => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  }[ch]));
+}
+
+function displayForms(value) {
+  return value.split('|').join(' / ');
+}
+
+function renderTable() {
+  const tbody = document.getElementById('verbTable');
+  tbody.innerHTML = '';
+
+  currentVerbs.forEach((verb, index) => {
+    const row = document.createElement('tr');
+    row.dataset.index = index;
+    row.dataset.word = verb[0];
+
+    row.innerHTML = `
+      <td class="word-cell">
+        <div class="word-line">
+          <span>${escapeHtml(verb[0])}</span>
+          <button
+            type="button"
+            class="hint-button"
+            title="Показать ответы"
+            aria-label="Подсказка для ${escapeHtml(verb[0])}"
+            onclick="toggleHint(this)">?</button>
+        </div>
+
+        <div class="hint-popover">
+          <div><strong>Past Simple:</strong> ${escapeHtml(displayForms(verb[1]))}</div>
+          <div><strong>Past Participle:</strong> ${escapeHtml(displayForms(verb[2]))}</div>
+          <div><strong>Перевод:</strong> ${escapeHtml(verb[3])}</div>
+        </div>
+      </td>
+
+      <td>
+        <input type="text" autocomplete="off" data-field="1"
+          aria-label="Past Simple ${escapeHtml(verb[0])}">
+      </td>
+
+      <td>
+        <input type="text" autocomplete="off" data-field="2"
+          aria-label="Past Participle ${escapeHtml(verb[0])}">
+      </td>
+
+      <td>
+        <input type="text" autocomplete="off" data-field="3"
+          aria-label="Перевод ${escapeHtml(verb[0])}">
+      </td>
+    `;
+
+    tbody.appendChild(row);
+  });
+
+  document.getElementById('total').textContent = currentVerbs.length;
+  updateStats();
+}
+
+function toggleHint(button) {
+  const popover = button.closest('td').querySelector('.hint-popover');
+  const wasVisible = popover.classList.contains('visible');
+
+  document.querySelectorAll('.hint-popover.visible').forEach(p => {
+    p.classList.remove('visible');
+  });
+
+  if (!wasVisible) {
+    popover.classList.add('visible');
+  }
+}
+
+function normalize(value) {
+  return value.toLowerCase()
+    .trim()
+    .replace(/ё/g, 'е')
+    .replace(/\s+/g, ' ')
+    .replace(/\s*\/\s*/g, '/')
+    .replace(/[.,!?;:]+$/g, '');
+}
+
+function checkOne(input, accepted) {
+  const answer = normalize(input);
+
+  if (!answer) return false;
+
+  return accepted.split('|').some(option =>
+    answer === normalize(option)
+  );
+}
+
+function checkTranslation(input, accepted) {
+  const answer = normalize(input);
+
+  if (!answer) return false;
+
+  return accepted.some(option =>
+    normalize(option) === answer
+  );
+}
+
+function checkAnswers() {
+  let correct = 0;
+  let wrong = 0;
+
+  document.querySelectorAll('#verbTable tr').forEach(row => {
+    const verb = currentVerbs[Number(row.dataset.index)];
+    const inputs = row.querySelectorAll('input');
+    let rowCorrect = true;
+
+    inputs.forEach(input => {
+      const field = Number(input.dataset.field);
+
+      const valid = field === 3
+        ? checkTranslation(input.value, verb[4])
+        : checkOne(input.value, verb[field]);
+
+      input.classList.remove('field-correct', 'field-wrong');
+      input.classList.add(valid ? 'field-correct' : 'field-wrong');
+
+      if (!valid) rowCorrect = false;
+    });
+
+    row.classList.remove('correct', 'wrong');
+    row.classList.add(rowCorrect ? 'correct' : 'wrong');
+
+    if (rowCorrect) correct++;
+    else wrong++;
+  });
+
+  document.getElementById('correctCount').textContent = correct;
+  document.getElementById('wrongCount').textContent = wrong;
+
+  document.getElementById('progressFill').style.width =
+    (correct / currentVerbs.length * 100 || 0) + '%';
+
+  document.getElementById('message').textContent =
+    correct === currentVerbs.length
+      ? '🎉 Отлично! Все ответы правильные!'
+      : `Правильных строк: ${correct} из ${currentVerbs.length}. Исправь красные поля и проверь ещё раз.`;
+}
+
+function updateStats() {
+  document.getElementById('correctCount').textContent = '0';
+  document.getElementById('wrongCount').textContent = '0';
+  document.getElementById('progressFill').style.width = '0%';
+}
+
+function collectAnswers() {
+  const answers = new Map();
+
+  document.querySelectorAll('#verbTable tr').forEach(row => {
+    const inputs = [...row.querySelectorAll('input')];
+    answers.set(row.dataset.word, inputs.map(input => input.value));
+  });
+
+  return answers;
+}
+
+function restoreAnswers(answers) {
+  document.querySelectorAll('#verbTable tr').forEach(row => {
+    const saved = answers.get(row.dataset.word);
+
+    if (saved) {
+      row.querySelectorAll('input').forEach((input, i) => {
+        input.value = saved[i];
+      });
+    }
+  });
+}
+
+function shuffleWords() {
+  const answers = collectAnswers();
+
+  currentVerbs = [...currentVerbs];
+
+  for (let i = currentVerbs.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+
+    [currentVerbs[i], currentVerbs[j]] =
+      [currentVerbs[j], currentVerbs[i]];
+  }
+
+  renderTable();
+  restoreAnswers(answers);
+
+  document.getElementById('message').textContent = '';
+}
+
+function resetAnswers() {
+  document.querySelectorAll('#verbTable tr').forEach(row => {
+    row.classList.remove('correct', 'wrong');
+
+    row.querySelectorAll('input').forEach(input => {
+      input.value = '';
+      input.classList.remove('field-correct', 'field-wrong');
+    });
+
+    row.querySelector('.hint-popover').classList.remove('visible');
+  });
+
+  updateStats();
+
+  document.getElementById('message').textContent =
+    'Ответы очищены. Начинай заново!';
+}
+
+function openSettings() {
+  const list = document.getElementById('wordList');
+  list.innerHTML = '';
+
+  verbs.forEach(verb => {
+    const label = document.createElement('label');
+    label.className = 'word-option';
+
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.value = verb[0];
+    checkbox.checked = selectedWords.has(verb[0]);
+
+    const span = document.createElement('span');
+    span.textContent = verb[0];
+
+    label.append(checkbox, span);
+    list.appendChild(label);
+  });
+
+  document.getElementById('wordCount').value = '';
+  document.getElementById('settingsModal').classList.add('open');
+}
+
+function closeSettings() {
+  document.getElementById('settingsModal').classList.remove('open');
+}
+
+function backdropClose(event) {
+  if (event.target.id === 'settingsModal') {
+    closeSettings();
+  }
+}
+
+function setAllWords(checked) {
+  document.querySelectorAll('#wordList input[type=checkbox]')
+    .forEach(input => input.checked = checked);
+}
+
+function applySettings() {
+  const checked = [
+    ...document.querySelectorAll('#wordList input:checked')
+  ].map(input => input.value);
+
+  if (!checked.length) {
+    alert('Выбери хотя бы один глагол.');
+    return;
+  }
+
+  const countInput = document.getElementById('wordCount').value.trim();
+
+  let chosen = verbs.filter(verb => checked.includes(verb[0]));
+
+  if (countInput !== '') {
+    const count = Number(countInput);
+
+    if (!Number.isInteger(count) || count < 1) {
+      alert('Укажи целое число больше нуля.');
+      return;
+    }
+
+    if (count > chosen.length) {
+      alert(`Отмечено только ${chosen.length} слов. Уменьши количество или отметь больше глаголов.`);
+      return;
+    }
+
+    chosen = shuffleArray(chosen).slice(0, count);
+  }
+
+  selectedWords = new Set(checked);
+  currentVerbs = chosen;
+
+  renderTable();
+
+  document.getElementById('message').textContent =
+    `Выбрано глаголов: ${currentVerbs.length}.`;
+
+  closeSettings();
+}
+
+function shuffleArray(array) {
+  const result = [...array];
+
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+
+  return result;
+}
+
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape') closeSettings();
+});
+
+initializeTheme();
 renderTable();
+
 </script>
 </body>
 </html>
